@@ -21,6 +21,7 @@ function  RYTHME:new(tempo, nb)
   obj.y = 1
   obj.loop = true
   obj.barre = false
+  obj.isEnd = false
   return (obj)
 end
 
@@ -65,7 +66,9 @@ end
 function RYTHME:update(dt)
   self.barre = false
   self.t = dt + self.t
+  self.isEnd = false  
   if self.t >= self.u * self.nb then
+    self.isEnd = true
     if self.loop == true then
       self.t = 0
     else

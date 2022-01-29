@@ -10,13 +10,6 @@ function MENU:new()
     return (obj)
 end
 
-function love.keypressed(key, scancode, isrepeat)
-   if key == "return" then
-      return ("return")
-   end
-   return ("false")
-end
-
 function MENU:boucle(nb)
     if love.keypressed(key, "return") then
         return sc_player_selection
