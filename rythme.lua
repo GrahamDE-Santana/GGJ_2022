@@ -14,7 +14,7 @@ function  RYTHME:new(tempo, nb)
   obj.t = 0
   obj.onEdit = false
   obj.data = {}
-  obj.data[1] = {false, false, false, false}
+  obj.data[1] = {false, false, false, true, false, false, false, true}
   obj.u = (60. / obj.tempo)
 
   obj.x = 1
@@ -26,14 +26,19 @@ end
 
 function RYTHME:getXY()
   local x = 1 + math.floor((self.t) / self.u)
-  local y = 1 + math.floor(math.fmod((self.t / self.u) + 1, x) * 4)
+  local y = 1 + math.floor(math.fmod((self.t / self.u) + 1, x) * 8)
 
+  if (x > self.nb) then
+    x = 1
+    y = 1
+  end
   return x, y
 end
 
 function RYTHME:getCurrentValue()
   local x, y = self:getXY()
 
+  print(self.t, x, y)
   return ((self.data[x])[y])
 end
 
@@ -77,10 +82,13 @@ end
 
 function RYTHME:edit(v)
   local tmp = self.t
-  self.t = self.t + (self.u * 0.25)
+  self.t = self.t + (self.u * 0)
   local x, y = self:getXY()
-  x = math.Clamp(x, 1, self.nb)
-  y = math.Clamp(y, 1, self.nb)
+  if (x >= 5) then
+    y = 1
+    x = 1
+  end
+
 
   self.data[x][y] = v
   self.t = tmp
