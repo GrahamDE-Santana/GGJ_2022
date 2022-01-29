@@ -40,9 +40,7 @@ function love.keypressed(key)
   if (Player.getSize() < 4) then
     if (Player.isPresent(key) ~= true) then
       local p = Player.newPlayer(key)
-      if Player.getSize() == 1 then
-        Receptor.newReceptor(p,dataR[1])
-      end
+      Receptor.newReceptor(p,dataR[Player.getSize()])
       if Player.getSize() == 4 then musique:play() end
     end
   end
@@ -59,7 +57,7 @@ function love.update(dt)
   if Player.getSize() == 4 then
     --Boucle principal
     --Receptor.update(dt)
-    Receptor.first():update(dt)
+    Receptor.update(dt)
     for i=1, 4 do
       dataR[i]:update(dt)
     end

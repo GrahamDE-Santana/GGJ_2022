@@ -39,6 +39,11 @@ function RECEPTOR:update(dt)
   self.prevP = p
   self.prevR = r
   self.r_v = r_v
+  if p then
+    self.player.sound:play()
+  else 
+    self.player.sound:stop()
+  end
   if self.pv ~= -1 and self.r_v == 1 then
     print(self.player, " OK")
   end
