@@ -8,7 +8,6 @@ function  CONNECTOR:new(a, b)
 
   obj.a = a
   obj.b = b
-  print(obj.a, obj.b)
   return (obj)
 end
 
@@ -17,11 +16,10 @@ function CONNECTOR:update(dt)
   x = x + 4
   if x > self.b.nb then
     x = x - self.b.nb
-    print(x)
   end
-  print(x)
   self.b:insert(self.a:getCurrentValue(), x, y)
 end
+
 
 return {
 
@@ -29,7 +27,6 @@ return {
      for i, v in pairs(CONNECTORS) do
         v:update(dt)
      end
-
   end,
 
   newConnector = function(a, b)

@@ -41,7 +41,6 @@ end
 function RYTHME:getCurrentValue()
   local x, y = self:getXY()
 
-  print(self.t, x, y)
   return ((self.data[x])[y])
 end
 
@@ -70,27 +69,29 @@ function RYTHME:drawUp(yy)
   local bpm = self.t;
   local x, y = self:getXY()
   local xx = 0
+  local power = 0
   for ix=1, 4 do
     for iy=1, 8 do
       if self.data[x][y] == true then
         love.graphics.setColor(1, 0.1, 0.1)
+        power = 4 + power
       else
         love.graphics.setColor(0.3, 0.3, 0.3)
+        power = 0
       end
-      love.graphics.rectangle("fill",125 + xx,yy,17 ,50)
-      love.graphics.setColor(1, 1, 1)
-      love.graphics.rectangle("line",125 + xx,yy,17,50)
-      print("XX = ", xx)
+      love.graphics.rectangle("fill",125 + xx ,yy-(power/2),17 ,50+power)
+      love.graphics.setColor(0.5, 0.5, 0.5)
+      love.graphics.rectangle("line",125 + xx,yy-(power/2),17,50+power)
 
+      xx = xx + 17.25
       y = y - 1
       if y <= 0 then
-        love.graphics.setColor(0.9, 0.2, 0.9)
-        love.graphics.rectangle("fill",125 + xx - 4,yy - 5,8,60)
+        love.graphics.setColor(0.9, 0.9, 0.9)
+        love.graphics.rectangle("fill",125 + xx - 4,yy - 5-(power/2),8,60+power)
         y = 8
         x = x - 1
         if (x <= 0) then x = self.nb end
       end
-      xx = xx + 17.25
 
     end
   end
@@ -111,13 +112,12 @@ function RYTHME:drawDown(yy)
         love.graphics.setColor(0.3, 0.3, 0.3)
       end
       love.graphics.rectangle("fill",125 + xx,yy,17 ,50)
-      love.graphics.setColor(1, 1, 1)
+      love.graphics.setColor(0.5, 0.5, 0.5)
       love.graphics.rectangle("line",125 + xx,yy,17,50)
-      print("XX = ", xx)
 
       y = y - 1
       if y <= 0 then
-        love.graphics.setColor(0.9, 0.2, 0.9)
+        love.graphics.setColor(0.9, 0.9, 0.9)
         love.graphics.rectangle("fill",125 + xx - 4,yy - 5,8,60)
         y = 8
         x = x - 1
@@ -142,18 +142,18 @@ function RYTHME:drawRight(xx)
         love.graphics.setColor(0.3, 0.3, 0.3)
       end
       love.graphics.rectangle("fill",xx,125 + yy,50 ,17)
-      love.graphics.setColor(1, 1, 1)
+      love.graphics.setColor(0.5, 0.5, 0.5)
       love.graphics.rectangle("line",xx,125 + yy,50,17)
 
+      yy = yy + 17.25
       y = y - 1
       if y <= 0 then
-        love.graphics.setColor(0.9, 0.2, 0.9)
+        love.graphics.setColor(0.9, 0.9, 0.9)
         love.graphics.rectangle("fill",xx - 5,125 + yy - 4,60,8)
         y = 8
         x = x - 1
         if (x <= 0) then x = self.nb end
       end
-      yy = yy + 17.25
     end
   end
   love.graphics.setColor(1, 1, 1)
@@ -172,12 +172,12 @@ function RYTHME:drawLeft(xx)
         love.graphics.setColor(0.3, 0.3, 0.3)
       end
       love.graphics.rectangle("fill",xx,125 + yy,50 ,17)
-      love.graphics.setColor(1, 1, 1)
+      love.graphics.setColor(0.5, 0.5, 0.5)
       love.graphics.rectangle("line",xx,125 + yy,50,17)
 
       y = y - 1
       if y <= 0 then
-        love.graphics.setColor(0.9, 0.2, 0.9)
+        love.graphics.setColor(0.9, 0.9, 0.9)
         love.graphics.rectangle("fill",xx - 5,125 + yy - 4,60,8)
         y = 8
         x = x - 1
@@ -208,6 +208,14 @@ function RYTHME:update(dt)
     self.x = x
     self.y = y
   end
+end
+
+function RYTHME:getEnd()
+  local x, y = self:getXY()
+
+  --x = x + 4
+  --if x > self.nb then x = x - self.nb end
+  return self.data[x][y]
 end
 
 function RYTHME:edit(v)

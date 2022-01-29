@@ -7,6 +7,7 @@ local game_loop_file = require "game_loop"
 Rythme_file =  require "rythme"
 Player = require "Player"
 Connector = require "connector"
+Receptor = require "recepteur"
 
 dataR = {}
 
@@ -24,23 +25,25 @@ function love.load()
     for i=1, 4 do
       dataR[i] = Rythme_file.newRythme(150, 8)
     end
-    dataR[1]:setTableData(1, {true, true, true, true, false, false, false, false})
+    dataR[1]:setTableData(1, {true, true, true, true, true, false, false, false})
     background = love.graphics.newImage('background.png')
     Connector.newConnector(dataR[1], dataR[2])
     --toto.t = toto.u * 4
     toto = Connector.newConnector(dataR[2], dataR[3])
     Connector.newConnector(dataR[3], dataR[4])
     toto = Connector.newConnector(dataR[4], dataR[1])
-    print (toto.a)
     musique = love.audio.newSource("songTheme_150.mp3", "stream")
     musique:setLooping(true)
-    musique:play()
 end
 
 function love.keypressed(key)
   if (Player.getSize() < 4) then
     if (Player.isPresent(key) ~= true) then
-      Player.newPlayer(key)
+      local p = Player.newPlayer(key)
+      if Player.getSize() == 1 then
+        Receptor.newReceptor(p,dataR[1])
+      end
+      if Player.getSize() == 4 then musique:play() end
     end
   end
   Player.playerPressDown(key)
@@ -50,19 +53,17 @@ function love.keyreleased(key)
   Player.playerPressRelease(key)
 end
 
---Boucle principal
 function love.update(dt)
-  print(toto.a)
   Connector.update(dt)
-  if Player.getSize() == 4 then
-  end
-  --dataR[1]:edit(true)
-  for i=1, 4 do
-    dataR[i]:update(dt)
-  end
   Player.update(dt)
-  if math.random(100) == 1 then
-    dataR[1]:edit(true)
+  if Player.getSize() == 4 then
+    --Boucle principal
+    --Receptor.update(dt)
+    Receptor.first():update(dt)
+    for i=1, 4 do
+      dataR[i]:update(dt)
+    end
+    --END
   end
 end
 
