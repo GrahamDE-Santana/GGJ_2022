@@ -1,10 +1,13 @@
 local sc_menu = 1
 local sc_player_selection = 2
 local sc_game = 3
-local sc_podium = 4
+local sc_pause = 4
+-- local sc_podium = 5
 local menu_file = require "src.menu"
 local pl_select_file = require "src.player_selection"
 local game_loop_file = require "src.game_loop"
+local pause_file = require "src.pause_menu"
+
 -- local podium_file = require "podium"
 Rythme_file =  require "src.rythme"
 Player = require "src.Player"
@@ -22,6 +25,7 @@ function love.load()
     menu = menu_file.newMenu()
     pl_select = pl_select_file.newPl_select()
     game_loop = game_loop_file.newGame_loop()
+    pause = pause_file.newPause()
     -- podium = podium_file()
     for i=1, 4 do
       dataR[i] = Rythme_file.newRythme(150, 8)
@@ -38,8 +42,11 @@ end
 function love.keypressed(key)
   if nb_scene == sc_player_selection then
     pl_select:keypress(key)
-  else
+  elseif nb_scene == sc_game then
     Player.playerPressDown(key)
+  end
+  if key == 'escape' then
+    pause:keypressed()
   end
 end
  
@@ -72,6 +79,7 @@ function love.draw()
     menu:draw()
   elseif (nb_scene == sc_player_selection) or (nb_scene == sc_game) then
     game_loop:draw()
-  -- elseif (nb_scene == sc_podium) then
+  elseif (nb_scene == sc_pause) then
+    pause:draw()
   end
 end

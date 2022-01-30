@@ -149,7 +149,6 @@ function PLAYER:hitAnimation(k, val)
    local spriteNum = math.floor(val.hitAnim.currentTime / val.hitAnim.duration * #val.hitAnim.quads) + 1
 
    if (spriteNum == #val.hitAnim.quads) then val.finishedAnimation = true else val.finishedAnimation = false end
-   print(spriteNum, ": ", #val.hitAnim.quads)
    love.graphics.draw(val.hitAnim.spriteSheet, val.hitAnim.quads[spriteNum],
                       val.pos[1], val.pos[2], 0, val.hitScale[1], val.hitScale[2])
 end

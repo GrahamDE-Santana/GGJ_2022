@@ -7,7 +7,6 @@ function RECEPTOR:new(player, rythmeIn, rythmeOut)
   self.__index = self
 
   obj.player = player
-  print(obj.player)
   obj.rin = rythmeIn
   obj.rout = rythmeOut
 
@@ -32,7 +31,6 @@ end
 
 function RECEPTOR:loose()
   self.player.life = self.player.life - 2.5
-  print("AIE")
   self.player.isHit = true
   self.player.finishedAnimation = false
   --TODO
@@ -64,7 +62,6 @@ function RECEPTOR:update(dt)
   end
 
   if (self.r == true) then
-    print("OK!!")
   end
   if p == self.r and self.onCreate == false then
     self.valide = true
@@ -77,7 +74,6 @@ function RECEPTOR:update(dt)
     if (p == false) then self.onCreate = false end
     if ((self.valide == false and p == true and self.r == false) or (self.onCreate == true)) and
         self.last == 0 then
-        print("last : ", self.last)
         self.onCreate = true
         self:createe()
         return (0)

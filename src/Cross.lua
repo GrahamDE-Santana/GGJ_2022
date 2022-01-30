@@ -26,7 +26,6 @@ return {
    end,
    draw = function()
       for i, val in pairs(CROSSES) do
-         print("tensp", val.transparenty)
          love.graphics.setColor(1, 1, 1, val.transparenty)
          love.graphics.draw(val.sprite, val.pos[1], val.pos[2], 0, val.scale[1], val.scale[2])
       end
