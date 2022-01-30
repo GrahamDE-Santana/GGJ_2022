@@ -7,7 +7,13 @@ local X_SCALING = 44
 local PLAYER_X = {32, 34, 44, 32}
 local PLAYER_Y = {32, 44, 42, 32}
 local DURATION = 1
-local PLAYER_SHEET = {"assets/mask_idle32x32.png", "assets/idle_bunny34x44.png", "assets/plant_idle44x42.png", "assets/virual_idle32x32.png"}
+
+local SPAWNED_PLAYERS = {false, false, false, false}
+local DEAD_PLAYERS = {false, false, false, false}
+local PLAYER_SHEET = {"assets/mask_idle32x32.png",
+                      "assets/idle_bunny34x44.png",
+                      "assets/plant_idle44x42.png",
+                      "assets/virual_idle32x32.png"}
 
 PLAYER = {}
 PLAYERS = {}
@@ -71,7 +77,6 @@ function PLAYER:new(key)
    obj.key = key
    obj.life = 50
    obj.pressed = false
-   obj.appeared = false
    obj.isHit = false
    obj.finishedAnimation = false
    return (obj)
@@ -85,39 +90,58 @@ function PLAYER:getSize()
    return len
 end
 
+function PLAYER:spawnPlayer(k, val)
+   if (val.finishedAnimation == true) then
+      val.animation = PLAYER:newAnimation(love.graphics.newImage(PLAYER_SHEET[k]), PLAYER_X[k], PLAYER_Y[k], DURATION)
+      val.scale = {X_SCALING / PLAYER_X[k] * 2, Y_SCALING / PLAYER_Y[k] * 2}
+      SPAWNED_PLAYERS[k] = true
+   end
+end
+
+function PLAYER:killPlayer(k, val)
+   val.animation = PLAYER:newAnimation(love.graphics.newImage("assets/dead_96x96.png"), 96, 96, DURATION)
+   val.scale = {X_SCALING / 96 * 2, Y_SCALING / 96 * 2}
+   DEAD_PLAYERS[k] = true
+   val.finishedAnimation = false
+end
+
+function PLAYER:hitAnimation(k, val)
+   local spriteNum = math.floor(val.hitAnim.currentTime / val.hitAnim.duration * #val.hitAnim.quads) + 1
+
+   if (spriteNum == #val.hitAnim.quads) then val.finishedAnimation = true else val.finishedAnimation = false end
+   print(spriteNum, ": ", #val.hitAnim.quads)
+   love.graphics.draw(val.hitAnim.spriteSheet, val.hitAnim.quads[spriteNum],
+                      val.pos[1], val.pos[2], 0, val.hitScale[1], val.hitScale[2])
+end
+
+function PLAYER:idleAnimation(k, val)
+   local spriteNum = math.floor(val.animation.currentTime / val.animation.duration * #val.animation.quads) + 1
+
+   if (spriteNum == #val.animation.quads) then val.finishedAnimation = true else val.finishedAnimation = false end
+   love.graphics.draw(val.animation.spriteSheet, val.animation.quads[spriteNum],
+                      val.pos[1], val.pos[2], 0, val.scale[1], val.scale[2])
+end
+
 return {
    players = function()
       return PLAYERS
    end,
    draw = function() --TODO fix bugged hit anim
       for k, val in pairs(PLAYERS) do
-         if (val.isHit ~= true) then
-            local spriteNum = math.floor(val.animation.currentTime / val.animation.duration * #val.animation.quads) + 1
-            if (spriteNum == #val.animation.quads) then val.finishedAnimation = true else val.finishedAnimation = false end
-            love.graphics.draw(val.animation.spriteSheet, val.animation.quads[spriteNum],
-                               val.pos[1], val.pos[2], 0, val.scale[1], val.scale[2])
-         else
-            local spriteNum = math.floor(val.hitAnim.currentTime / val.hitAnim.duration * #val.hitAnim.quads) + 1
-            if (spriteNum == #val.hitAnim.quads) then val.finishedAnimation = true else val.finishedAnimation = false end
-            print(spriteNum, ": ", #val.hitAnim.quads)
-            
-            love.graphics.draw(val.hitAnim.spriteSheet, val.hitAnim.quads[spriteNum],
-                               val.pos[1], val.pos[2], 0, val.hitScale[1], val.hitScale[2])
-         end
-         love.graphics.rectangle("fill", val.life_full[1],
-                                 val.life_full[2], val.life, val.life_full[4], love.graphics.setColor(val.color))
-         love.graphics.rectangle("line", val.life_empty[1],
-                                 val.life_empty[2], val.life_empty[3], val.life_empty[4], love.graphics.setColor(val.color))
-         love.graphics.setColor(1, 1, 1)
+         if (DEAD_PLAYERS[k] ~= true) then
+            if (val.isHit ~= true) then PLAYER:idleAnimation(k, val) else PLAYER:hitAnimation(k, val) end
+            love.graphics.rectangle("fill", val.life_full[1],
+                                    val.life_full[2], val.life, val.life_full[4], love.graphics.setColor(val.color))
+            love.graphics.rectangle("line", val.life_empty[1],
+                                    val.life_empty[2], val.life_empty[3], val.life_empty[4], love.graphics.setColor(val.color))
+            love.graphics.setColor(1, 1, 1)
+         else if (val.finishedAnimation == false) then PLAYER:idleAnimation(k, val) end end
       end
    end,
    update = function(dt)
       for k, val in pairs(PLAYERS) do
-         if (val.finishedAnimation == true and val.appeared == false) then
-            val.animation = PLAYER:newAnimation(love.graphics.newImage(PLAYER_SHEET[k]), PLAYER_X[k], PLAYER_Y[k], DURATION)
-            val.scale = {X_SCALING / PLAYER_X[k] * 2, Y_SCALING / PLAYER_Y[k] * 2}
-            val.appeared = true
-         end
+         if (SPAWNED_PLAYERS[k] == false) then PLAYER:spawnPlayer(k, val) end
+         if (val.life <= 0 and DEAD_PLAYERS[k] == false) then PLAYER:killPlayer(k, val) end
          if (val.isHit == true and val.finishedAnimation == true) then val.isHit = false end
          --if (val.isHit == true) then print("c'est moi: ", PLAYER_Y[k]) end
          --if (val.isHit ~= true) then
@@ -159,7 +183,7 @@ return {
          table.insert(t_c, v)
       end
       for i, v in pairs(t_c) do
-         f(i, v.key, v.pressed)
+         f(v)
       end
    end,
    isPresent = function(key)
