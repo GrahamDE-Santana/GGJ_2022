@@ -26,7 +26,12 @@ function PLAYER:new(key)
    if (PLAYER:getSize() == 0) then
       obj.color = {200, 0, 0}
       obj.pos = {20, 20}
-      obj.sound = love.audio.newSource("sound/FM_twang.mp3", "static")
+      obj.sound = {}
+      obj.sound[1] = love.audio.newSource("sound/FM_twang_do.mp3", "static")
+      obj.sound[2] = love.audio.newSource("sound/FM_twang_mi.mp3", "static")
+      obj.sound[3] = love.audio.newSource("sound/FM_twang_sol.mp3", "static")
+      obj.sound[4] = love.audio.newSource("sound/FM_twang_si.mp3", "static")
+      obj.sound[5] = love.audio.newSource("sound/FM_twang_dodo.mp3", "static")
       obj.life_full = {20 + 120, 20 + 100, 0, 20}
       obj.life_empty = {20 + 120, 20 + 100, 150, 20}
       obj.hitAnim = PLAYER:newAnimation(love.graphics.newImage("assets/mask_hit_32x32.png"), 32, 32, DURATION)
