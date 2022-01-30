@@ -1,4 +1,4 @@
-local sc_menu = 1
+
 local sc_player_selection = 2
 local sc_game = 3
 local lg = love.graphics
