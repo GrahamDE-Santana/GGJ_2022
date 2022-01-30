@@ -196,6 +196,7 @@ return {
          if (val.life <= 0 and DEAD_PLAYERS[k] == false) then PLAYER:killPlayer(k, val) end
          if (REMAINING_PLAYERS == 1) then
             for k, val in pairs(PLAYERS) do
+               val.animation = PLAYER:newAnimation(love.graphics.newImage(PLAYER_SHEET[k]), PLAYER_X[k], PLAYER_Y[k], DURATION)
                if (DEAD_PLAYERS[k] == false) then table.insert(PODIUM, val) GAME_END = true end
             end
          end
