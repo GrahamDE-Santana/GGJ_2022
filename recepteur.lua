@@ -50,6 +50,7 @@ function RECEPTOR:update(dt)
   end
 
   if self.player.life <= 0 then
+    self.player:stopSong()
     self.player.life = 0
     if self.r == true then
       self:createe()
@@ -57,9 +58,9 @@ function RECEPTOR:update(dt)
     return 0
   end
   if p == true or self.r == true then
-    self.player.sound:play()
+    self.player:playSong()
   else
-    self.player.sound:stop()
+    self.player:stopSong()
   end
 
   if (self.r == true) then

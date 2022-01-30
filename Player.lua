@@ -39,7 +39,12 @@ function PLAYER:new(key)
       obj.hitScale = {X_SCALING / 32 * 2, Y_SCALING / 32 * 2}
    elseif (PLAYER:getSize() == 1) then
       obj.pos = {680, 20}
-      obj.sound = love.audio.newSource("sound/rock_organ.mp3", "static")
+      obj.sound = {}
+      obj.sound[1] = love.audio.newSource("sound/rock_organ_do.mp3", "static")
+      obj.sound[2] = love.audio.newSource("sound/rock_organ_mi.mp3", "static")
+      obj.sound[3] = love.audio.newSource("sound/rock_organ_sol.mp3", "static")
+      obj.sound[4] = love.audio.newSource("sound/rock_organ_si.mp3", "static")
+      obj.sound[5] = love.audio.newSource("sound/rock_organ_dodo.mp3", "static")
       obj.life_full = {680 - 170, 20 + 100, 0, 20}
       obj.life_empty = {680 - 170, 20 + 100, 150, 20}
       obj.color = {200, 0, 220}
@@ -47,7 +52,12 @@ function PLAYER:new(key)
       obj.hitScale = {X_SCALING / 34 * 2, Y_SCALING / 44 * 2}
    elseif (PLAYER:getSize() == 2) then
      obj.pos = {680, 680}
-     obj.sound = love.audio.newSource("sound/BeepBox-Song.mp3", "static")
+     obj.sound = {}
+     obj.sound[1] = love.audio.newSource("sound/tuba_do.mp3", "static")
+     obj.sound[2] = love.audio.newSource("sound/tuba_mi.mp3", "static")
+     obj.sound[3] = love.audio.newSource("sound/tuba_sol.mp3", "static")
+     obj.sound[4] = love.audio.newSource("sound/tuba_si.mp3", "static")
+     obj.sound[5] = love.audio.newSource("sound/tuba_dodo.mp3", "static")
      obj.life_full = {680 - 170, 680, 0, 20}
      obj.life_empty = {680 - 170, 680, 150, 20}
      obj.color = {220, 180, 0}
@@ -55,7 +65,12 @@ function PLAYER:new(key)
      obj.hitScale = {X_SCALING / 44 * 2, Y_SCALING / 42 * 2}
    else
      obj.pos = {20, 680}
-     obj.sound = love.audio.newSource("sound/music_box.mp3", "static")
+     obj.sound = {}
+     obj.sound[1] = love.audio.newSource("sound/music_box_do.mp3", "static")
+     obj.sound[2] = love.audio.newSource("sound/music_box_mi.mp3", "static")
+     obj.sound[3] = love.audio.newSource("sound/music_box_sol.mp3", "static")
+     obj.sound[4] = love.audio.newSource("sound/music_box_si.mp3", "static")
+     obj.sound[5] = love.audio.newSource("sound/music_box_dodo.mp3", "static")
      obj.life_full = {20 + 120, 680, 0, 20}
      obj.life_empty = {20 + 120, 680, 150, 20}
      obj.color = {0, 20, 200}
@@ -69,6 +84,9 @@ function PLAYER:new(key)
    obj.pressed = false
    obj.isHit = false
    obj.finishedAnimation = false
+   obj.prevN = 1
+   obj.ps = 1
+   obj.isPlaying = false
    return (obj)
 end
 
@@ -94,6 +112,21 @@ function PLAYER:getSize()
       len = len + 1
    end
    return len
+end
+
+function PLAYER:playSong()
+  if self.isPlaying ~= true then
+    self.isPlaying = true
+    self.sound[self.ps]:stop()
+    self.ps = self.ps + 1
+    if self.ps > 5 then self.ps = 1 end
+    self.sound[self.ps]:play()
+  end
+end
+
+function PLAYER:stopSong()
+  self.sound[self.ps]:stop()
+  self.isPlaying = false
 end
 
 function PLAYER:spawnPlayer(k, val)
