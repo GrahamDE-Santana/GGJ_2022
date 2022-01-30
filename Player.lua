@@ -4,6 +4,10 @@
 
 local Y_SCALING = 42
 local X_SCALING = 44
+local PLAYER_X = {32, 34, 44, 32}
+local PLAYER_Y = {32, 44, 42, 32}
+local DURATION = 1
+local PLAYER_SHEET = {"assets/mask_idle32x32.png", "assets/idle_bunny34x44.png", "assets/plant_idle44x42.png", "assets/virual_idle32x32.png"}
 
 PLAYER = {}
 PLAYERS = {}
@@ -21,7 +25,6 @@ function PLAYER:newAnimation(image, width, height, duration)
 
     animation.duration = duration or 1
     animation.currentTime = 0
-
     return animation
 end
 
@@ -31,45 +34,38 @@ function PLAYER:new(key)
    self.__index = self
 
    if (PLAYER:getSize() == 0) then
-      obj.animation = PLAYER:newAnimation(love.graphics.newImage("assets/mask_idle32x32.png"), 32, 32, 1)
-      obj.color = {255, 0, 0}
-      obj.scale = {X_SCALING / 32 * 2, Y_SCALING / 32 * 2}
+      obj.color = {200, 0, 0}
       obj.pos = {20, 20}
       obj.sound = love.audio.newSource("sound/FM_twang.mp3", "static")
       obj.life_full = {20 + 120, 20 + 100, 0, 20}
       obj.life_empty = {20 + 120, 20 + 100, 150, 20}
-      obj.color = {200, 0, 0}
     elseif (PLAYER:getSize() == 1) then
-      obj.animation = PLAYER:newAnimation(love.graphics.newImage("assets/idle_bunny34x44.png"), 34, 44, 1)
-      obj.color = {0, 0, 255}
-      obj.scale = {X_SCALING / 34 * 2, Y_SCALING / 44 * 2}
       obj.pos = {680, 20}
       obj.sound = love.audio.newSource("sound/rock_organ.mp3", "static")
       obj.life_full = {680 - 170, 20 + 100, 0, 20}
       obj.life_empty = {680 - 170, 20 + 100, 150, 20}
       obj.color = {200, 0, 220}
    elseif (PLAYER:getSize() == 2) then
-     obj.animation = PLAYER:newAnimation(love.graphics.newImage("assets/plant_idle44x42.png"), 44, 42, 1)
-     obj.color = {255, 255, 0}
-     obj.scale = {2, 2}
      obj.pos = {680, 680}
      obj.sound = love.audio.newSource("sound/BeepBox-Song.mp3", "static")
      obj.life_full = {680 - 170, 680, 0, 20}
      obj.life_empty = {680 - 170, 680, 150, 20}
-     obj.color = {220, 180, 0}      
+     obj.color = {220, 180, 0}
    else
-     obj.animation = PLAYER:newAnimation(love.graphics.newImage("assets/virual_idle32x32.png"), 32, 32, 1)
-     obj.color = {0, 255, 0}
-     obj.scale = {X_SCALING / 32 * 2, Y_SCALING / 32 * 2}
      obj.pos = {20, 680}
      obj.sound = love.audio.newSource("sound/music_box.mp3", "static")
      obj.life_full = {20 + 120, 680, 0, 20}
      obj.life_empty = {20 + 120, 680, 150, 20}
      obj.color = {0, 20, 200}
    end
+   obj.scale = {X_SCALING / 96 * 2, Y_SCALING / 96 * 2}
+   obj.animation = PLAYER:newAnimation(love.graphics.newImage("assets/appear_96_96.png"), 96, 96, DURATION)
    obj.key = key
    obj.life = 50
    obj.pressed = false
+   obj.appeared = false
+   obj.isHit = false
+   obj.finishedAnimation = false
    return (obj)
 end
 
@@ -88,15 +84,26 @@ return {
    draw = function()
       for k, val in pairs(PLAYERS) do
          local spriteNum = math.floor(val.animation.currentTime / val.animation.duration * #val.animation.quads) + 1
+         if (spriteNum == #val.animation.quads) then val.finishedAnimation = true end
+         --print("spritenum: ", spriteNum, "total: ", #val.animation.quads)
+         --if (val.finishedAnimation == true) then
          love.graphics.draw(val.animation.spriteSheet, val.animation.quads[spriteNum],
                             val.pos[1], val.pos[2], 0, val.scale[1], val.scale[2])
-         love.graphics.rectangle("fill", val.life_full[1], val.life_full[2], val.life, val.life_full[4], love.graphics.setColor(val.color))
-         love.graphics.rectangle("line", val.life_empty[1], val.life_empty[2], val.life_empty[3], val.life_empty[4], love.graphics.setColor(val.color))
+         --end
+         love.graphics.rectangle("fill", val.life_full[1],
+                                 val.life_full[2], val.life, val.life_full[4], love.graphics.setColor(val.color))
+         love.graphics.rectangle("line", val.life_empty[1],
+                                 val.life_empty[2], val.life_empty[3], val.life_empty[4], love.graphics.setColor(val.color))
          love.graphics.setColor(1, 1, 1)
       end
    end,
    update = function(dt)
       for k, val in pairs(PLAYERS) do
+         if (val.finishedAnimation == true and val.appeared == false) then
+            val.animation = PLAYER:newAnimation(love.graphics.newImage(PLAYER_SHEET[k]), PLAYER_X[k], PLAYER_Y[k], DURATION)
+            val.scale = {X_SCALING / PLAYER_X[k] * 2, Y_SCALING / PLAYER_Y[k] * 2}
+            val.appeared = true
+         end
          val.animation.currentTime = val.animation.currentTime + dt
          if val.animation.currentTime >= val.animation.duration then
             val.animation.currentTime = val.animation.currentTime - val.animation.duration
