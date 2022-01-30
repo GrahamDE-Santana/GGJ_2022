@@ -8,6 +8,8 @@ local PLAYER_X = {32, 34, 44, 32}
 local PLAYER_Y = {32, 44, 42, 32}
 local DURATION = 1
 
+local GAME_END = false
+local REMAINING_PLAYERS = 4
 local SPAWNED_PLAYERS = {false, false, false, false}
 local DEAD_PLAYERS = {false, false, false, false}
 local PLAYER_SHEET = {"assets/mask_idle32x32.png",
@@ -18,6 +20,10 @@ local PLAYER_SHEET = {"assets/mask_idle32x32.png",
 PLAYER = {}
 PLAYERS = {}
 PODIUM = {}
+
+function PLAYER:gameEnd()
+   return (GAME_END)
+end
 
 function PLAYER:new(key)
    local obj = {}
@@ -143,6 +149,8 @@ function PLAYER:killPlayer(k, val)
    val.scale = {X_SCALING / 96 * 2, Y_SCALING / 96 * 2}
    DEAD_PLAYERS[k] = true
    val.finishedAnimation = false
+   REMAINING_PLAYERS = REMAINING_PLAYERS - 1
+   table.insert(PODIUM, val)
 end
 
 function PLAYER:hitAnimation(k, val)
@@ -162,6 +170,10 @@ function PLAYER:idleAnimation(k, val)
 end
 
 return {
+   gameEnd = function()
+      isTrue = PLAYER:gameEnd()
+      return (isTrue)
+   end,
    players = function()
       return PLAYERS
    end,
@@ -182,6 +194,12 @@ return {
       for k, val in pairs(PLAYERS) do
          if (SPAWNED_PLAYERS[k] == false) then PLAYER:spawnPlayer(k, val) end
          if (val.life <= 0 and DEAD_PLAYERS[k] == false) then PLAYER:killPlayer(k, val) end
+         if (REMAINING_PLAYERS == 1) then
+            for k, val in pairs(PLAYERS) do
+               if (DEAD_PLAYERS[k] == false) then table.insert(PODIUM, val) GAME_END = true end
+            end
+         end
+            
          if (val.isHit == true and val.finishedAnimation == true) then val.isHit = false end
             val.animation.currentTime = val.animation.currentTime + dt
             if val.animation.currentTime >= val.animation.duration then
