@@ -2,7 +2,7 @@ local sc_menu = 1
 local sc_player_selection = 2
 local sc_game = 3
 local sc_pause = 4
--- local sc_podium = 5
+local sc_podium = 5
 local menu_file = require "src.menu"
 local pl_select_file = require "src.player_selection"
 local game_loop_file = require "src.game_loop"
@@ -47,7 +47,7 @@ function love.keypressed(key)
   elseif (nb_scene == sc_menu) then
     menu:keypressed(key)
   end
-  if key == 'escape' then
+  if key == 'escape' and nb_scene ~= sc_podium then
     pause:keypressed()
   end
 end
