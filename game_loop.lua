@@ -20,6 +20,20 @@ function GAME_LOOP:update(dt)
 end
 
 function GAME_LOOP:draw()
+    -- Background 
+    love.graphics.draw(background, 0, 0)
+    -- Line of the player
+    love.graphics.rectangle("line", 20,20, 100,100)
+    love.graphics.rectangle("line", 680 ,20, 100,100)
+    love.graphics.rectangle("line", 20,480 + 200, 100,100)
+    love.graphics.rectangle("line", 680,480 + 200, 100,100)
+    -- Player and attribute
+    Player.draw()
+    -- Connectors
+    dataR[1]:drawUp(50)
+    dataR[2]:drawRight(715)
+    dataR[3]:drawDown(715)
+    dataR[4]:drawLeft(50)
 end
 
 return { 

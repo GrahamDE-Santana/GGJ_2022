@@ -1,7 +1,7 @@
 local sc_menu = 1
 local sc_player_selection = 2
 local sc_game = 3
-local menu_file = require "scene"
+local menu_file = require "menu"
 local pl_select_file = require "player_selection"
 local game_loop_file = require "game_loop"
 Rythme_file =  require "rythme"
@@ -16,7 +16,7 @@ dataR = {}
 function love.load()
     num = 0
     love.window.setMode(800, 800)
-    nb_scene = sc_player_selection
+    nb_scene = sc_menu
     menu = menu_file.newMenu()
     pl_select = pl_select_file.newPl_select()
     game_loop = game_loop_file.newGame_loop()
@@ -47,6 +47,13 @@ function love.keyreleased(key)
   end
 end
 
+function love.mousepressed(x, y, button, istouch)
+  if (nb_scene == sc_menu) then
+    menu:mousepressed(x, y, button, istouch)
+  end
+end
+
+
 function love.update(dt)
   if nb_scene == sc_player_selection then
     pl_select:update(dt)
@@ -58,19 +65,9 @@ end
 
 --function draw.
 function love.draw()
-    -- game loop ou pl_select
-    love.graphics.draw(background, 0, 0)
-
-    -- mettre ca dans la game loop et dans le player selection
-    love.graphics.rectangle("line", 20,20, 100,100)
-    love.graphics.rectangle("line", 680 ,20, 100,100)
-    love.graphics.rectangle("line", 20,480 + 200, 100,100)
-    love.graphics.rectangle("line", 680,480 + 200, 100,100)
-
-    --m Mettre ca dans la game loop
-    Player.draw()
-    dataR[1]:drawUp(50)
-    dataR[2]:drawRight(715)
-    dataR[3]:drawDown(715)
-    dataR[4]:drawLeft(50)
+  if nb_scene == sc_menu then
+    menu:draw()
+  else
+    game_loop:draw()
+  end
 end
