@@ -47,8 +47,13 @@ function love.keypressed(key)
   elseif (nb_scene == sc_menu) then
     menu:keypressed(key)
   end
-  if key == 'escape' and nb_scene ~= sc_podium then
-    pause:keypressed()
+  if key == 'escape' then
+    if nb_scene ~= sc_podium then
+      pause:keypressed()
+    else
+      nb_scene = sc_menu
+      Player = newPlayer()
+    end
   end
 end
  
