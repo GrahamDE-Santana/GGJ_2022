@@ -61,7 +61,7 @@ function love.keypressed(key)
     end
   end
 end
- 
+
 function love.keyreleased(key)
   if (nb_scene == sc_player_selection or nb_scene == sc_game) then
     Player.playerPressRelease(key)

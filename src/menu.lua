@@ -67,7 +67,6 @@ function MENU:mousepressed(x, y, button, istouch)
     if button == 1 then
         if string.find(menu, "main") then
             if (x >= playButton_minX and x <= playButton_maxX) and (y >= playButton_minY and y <= playButton_maxY) then
-                menu = "play"
                 nb_scene = sc_player_selection
                 print(nb_scene)
             elseif (x >= settingsButton_minX and x <= settingsButton_maxX) and (y >= settingsButton_minY and y <= settingsButton_maxY) then
