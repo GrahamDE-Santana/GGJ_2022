@@ -63,6 +63,17 @@ function love.mousepressed(x, y, button, istouch)
   end
 end
 
+function love.keypressed(key)
+  if (nb_scene == sc_menu) then
+    menu:keypressed(key)
+  end
+end
+
+function love.textinput(t)
+  if (nb_scene == sc_menu) then
+    menu:textinput(t)
+  end
+end
 
 function love.update(dt)
   if nb_scene == sc_player_selection then
