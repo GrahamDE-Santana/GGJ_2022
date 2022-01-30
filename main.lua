@@ -7,8 +7,8 @@ local menu_file = require "src.menu"
 local pl_select_file = require "src.player_selection"
 local game_loop_file = require "src.game_loop"
 local pause_file = require "src.pause_menu"
+local podium_file = require "src.podium"
 
--- local podium_file = require "podium"
 Rythme_file =  require "src.rythme"
 Player = require "src.Player"
 Connector = require "src.connector"
@@ -26,7 +26,7 @@ function love.load()
     pl_select = pl_select_file.newPl_select()
     game_loop = game_loop_file.newGame_loop()
     pause = pause_file.newPause()
-    -- podium = podium_file()
+    podium = podium_file.newPodium()
     for i=1, 4 do
       dataR[i] = Rythme_file.newRythme(150, 8)
     end
@@ -44,13 +44,14 @@ function love.keypressed(key)
     pl_select:keypress(key)
   elseif nb_scene == sc_game then
     Player.playerPressDown(key)
+  elseif (nb_scene == sc_menu) then
+    menu:keypressed(key)
   end
   if key == 'escape' then
     pause:keypressed()
   end
 end
  
-
 function love.keyreleased(key)
   if (nb_scene == sc_player_selection or nb_scene == sc_game) then
     Player.playerPressRelease(key)
@@ -60,12 +61,6 @@ end
 function love.mousepressed(x, y, button, istouch)
   if (nb_scene == sc_menu) then
     menu:mousepressed(x, y, button, istouch)
-  end
-end
-
-function love.keypressed(key)
-  if (nb_scene == sc_menu) then
-    menu:keypressed(key)
   end
 end
 
@@ -80,6 +75,8 @@ function love.update(dt)
     pl_select:update(dt)
   elseif nb_scene == sc_game then
     game_loop:update(dt)
+  elseif nb_scene == sc_podium then
+    podium:update(dt)
   end
 end
 
@@ -92,5 +89,7 @@ function love.draw()
     game_loop:draw()
   elseif (nb_scene == sc_pause) then
     pause:draw()
+  elseif nb_scene == sc_podium then
+    podium:draw(dt)
   end
 end

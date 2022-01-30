@@ -1,6 +1,8 @@
 local sc_menu = 1
 local sc_player_selection = 2
 local sc_game = 3
+local sc_pause = 4
+local sc_podium = 5
 GAME_LOOP = {}
 
 
@@ -34,6 +36,9 @@ function GAME_LOOP:draw()
     dataR[2]:drawRight(715)
     dataR[3]:drawDown(715)
     dataR[4]:drawLeft(50)
+    if Player:gameEnd() == true then
+        nb_scene = sc_podium
+    end
 end
 
 return { 
