@@ -82,7 +82,7 @@ function RYTHME:drawUp(yy)
   local x, y = self:getXY()
   local xx = 0
   local power = 0
-  local up = self.v * 15
+  local up = self.v * 30
   local size = 17 + (up/15)
   for ix=1, 4 do
     for iy=1, 8 do

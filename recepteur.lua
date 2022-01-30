@@ -31,7 +31,7 @@ function RECEPTOR:wait()
 end
 
 function RECEPTOR:loose()
-  self.player.life = self.player.life - 1
+  self.player.life = self.player.life - 2.5
   print("AIE")
   self.player.isHit = true
   self.player.finishedAnimation = false

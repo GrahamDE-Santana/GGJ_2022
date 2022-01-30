@@ -1,6 +1,6 @@
 --Player.lua
 
---Player = Class('Player')
+local Cross = require "Cross"
 
 local Y_SCALING = 42
 local X_SCALING = 44
@@ -17,22 +17,6 @@ local PLAYER_SHEET = {"assets/mask_idle32x32.png",
 
 PLAYER = {}
 PLAYERS = {}
-
-function PLAYER:newAnimation(image, width, height, duration)
-    local animation = {}
-    animation.spriteSheet = image;
-    animation.quads = {};
-
-    for y = 0, image:getHeight() - height, height do
-        for x = 0, image:getWidth() - width, width do
-            table.insert(animation.quads, love.graphics.newQuad(x, y, width, height, image:getDimensions()))
-        end
-    end
-
-    animation.duration = duration or 1
-    animation.currentTime = 0
-    return animation
-end
 
 function PLAYER:new(key)
    local obj = {}
@@ -82,6 +66,22 @@ function PLAYER:new(key)
    return (obj)
 end
 
+function PLAYER:newAnimation(image, width, height, duration)
+    local animation = {}
+    animation.spriteSheet = image;
+    animation.quads = {};
+
+    for y = 0, image:getHeight() - height, height do
+        for x = 0, image:getWidth() - width, width do
+            table.insert(animation.quads, love.graphics.newQuad(x, y, width, height, image:getDimensions()))
+        end
+    end
+
+    animation.duration = duration or 1
+    animation.currentTime = 0
+    return animation
+end
+
 function PLAYER:getSize()
    len = 0
    for i in pairs(PLAYERS) do
@@ -99,6 +99,7 @@ function PLAYER:spawnPlayer(k, val)
 end
 
 function PLAYER:killPlayer(k, val)
+   Cross.newCross(val.pos[1], val.pos[2])
    val.animation = PLAYER:newAnimation(love.graphics.newImage("assets/dead_96x96.png"), 96, 96, DURATION)
    val.scale = {X_SCALING / 96 * 2, Y_SCALING / 96 * 2}
    DEAD_PLAYERS[k] = true
@@ -137,25 +138,23 @@ return {
             love.graphics.setColor(1, 1, 1)
          else if (val.finishedAnimation == false) then PLAYER:idleAnimation(k, val) end end
       end
+      Cross.draw()
    end,
    update = function(dt)
       for k, val in pairs(PLAYERS) do
          if (SPAWNED_PLAYERS[k] == false) then PLAYER:spawnPlayer(k, val) end
          if (val.life <= 0 and DEAD_PLAYERS[k] == false) then PLAYER:killPlayer(k, val) end
          if (val.isHit == true and val.finishedAnimation == true) then val.isHit = false end
-         --if (val.isHit == true) then print("c'est moi: ", PLAYER_Y[k]) end
-         --if (val.isHit ~= true) then
             val.animation.currentTime = val.animation.currentTime + dt
             if val.animation.currentTime >= val.animation.duration then
                val.animation.currentTime = val.animation.currentTime - val.animation.duration
             end
-         --else
             val.hitAnim.currentTime = val.hitAnim.currentTime + dt
             if val.hitAnim.currentTime >= val.hitAnim.duration then
                val.hitAnim.currentTime = val.hitAnim.currentTime - val.hitAnim.duration
             end
-         --end
-      end
+      end --end for
+      Cross.update()
    end,
    playerPressDown = function(key)
       for k, val in pairs(PLAYERS) do
