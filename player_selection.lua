@@ -10,36 +10,26 @@ function PL_SELECT:new()
     obj = {}
     setmetatable(obj, self)
     self.__index = self
-
     return (obj)
 end
 
-function PL_SELECT:update(dt, player)
-    --Faire l'affichage des perso
-
+function PL_SELECT:update(dt)
+  Player.update(dt)
 end
 
 function PL_SELECT:keypress(key)
     if (Player.getSize() < 4) then
-        if (Player.isPresent(key) == true) then
-        text = "Key alreasy taken by player"
-        else
-        last = Player.newPlayer(key)
+        if (Player.isPresent(key) ~= true) then
+            Player.newPlayer(key)
         end
-    else
-        game_loop:initialisation()
-        nb_scene = sc_game
     end
-    Player.playerPressDown(key)
-    print ("")
-    Player.foreach(print)
-end
-
-function PL_SELECT:keyrelease(key)
-    Player.playerPressRelease(key)
-    Player.foreach(print)
-    if key == "return" then
-      text = "RETURN has been released!"
+    if Player.getSize() == 4 then
+        Receptor.newReceptor(Player.players()[1], dataR[4], dataR[1])
+        Receptor.newReceptor(Player.players()[2], dataR[1], dataR[2])
+        Receptor.newReceptor(Player.players()[3], dataR[2], dataR[3])
+        Receptor.newReceptor(Player.players()[4], dataR[3], dataR[4])
+        musique:play()
+        nb_scene = sc_game
     end
 end
 

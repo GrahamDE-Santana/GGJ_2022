@@ -8,12 +8,10 @@ Rythme_file =  require "rythme"
 Player = require "Player"
 Connector = require "connector"
 Receptor = require "recepteur"
-
+nb_scene = 0
 dataR = {}
 
 -- Function d'initialisation
-nb_scene = 0
-local toto = {}
 
 function love.load()
     num = 0
@@ -25,62 +23,51 @@ function love.load()
     for i=1, 4 do
       dataR[i] = Rythme_file.newRythme(150, 8)
     end
-    --dataR[1]:setTableData(1, {true, true, true, true, false, false, false, false})
     background = love.graphics.newImage('background.png')
     Connector.newConnector(dataR[1], dataR[2])
-    --toto.t = toto.u * 4
-    toto = Connector.newConnector(dataR[2], dataR[3])
+    Connector.newConnector(dataR[2], dataR[3])
     Connector.newConnector(dataR[3], dataR[4])
-    toto = Connector.newConnector(dataR[4], dataR[1])
+    Connector.newConnector(dataR[4], dataR[1])
     musique = love.audio.newSource("songTheme_150.mp3", "stream")
     musique:setLooping(true)
 end
 
 function love.keypressed(key)
-  if (Player.getSize() < 4) then
-    if (Player.isPresent(key) ~= true) then
-      Player.newPlayer(key)
-      if Player.getSize() == 4 then
-        Receptor.newReceptor(Player.players()[1], dataR[4], dataR[1])
-        Receptor.newReceptor(Player.players()[2], dataR[1], dataR[2])
-        Receptor.newReceptor(Player.players()[3], dataR[2], dataR[3])
-        Receptor.newReceptor(Player.players()[4], dataR[3], dataR[4])
-        musique:play()
-      end
-    end
+  if nb_scene == sc_player_selection then
+    pl_select:keypress(key)
+  else
+    Player.playerPressDown(key)
   end
-  Player.playerPressDown(key)
 end
+ 
 
 function love.keyreleased(key)
-  Player.playerPressRelease(key)
+  if (nb_scene == sc_player_selection or nb_scene == sc_game) then
+    Player.playerPressRelease(key)
+  end
 end
 
 function love.update(dt)
-  Player.update(dt)
-  if Player.getSize() == 4 then
-    --Boucle principal
-    --Receptor.first():update(dt)
-    for i=1, 4 do
-      dataR[i]:update(dt)
-    end
-    Receptor.update(dt)
-    --Receptor.first():update(dt)
-    --Connector.update(dt)
-    --END
+  if nb_scene == sc_player_selection then
+    pl_select:update(dt)
+  elseif nb_scene == sc_game then
+    game_loop:update(dt)
   end
 end
 
 
 --function draw.
 function love.draw()
+    -- game loop ou pl_select
     love.graphics.draw(background, 0, 0)
 
+    -- mettre ca dans la game loop et dans le player selection
     love.graphics.rectangle("line", 20,20, 100,100)
     love.graphics.rectangle("line", 680 ,20, 100,100)
     love.graphics.rectangle("line", 20,480 + 200, 100,100)
     love.graphics.rectangle("line", 680,480 + 200, 100,100)
 
+    --m Mettre ca dans la game loop
     Player.draw()
     dataR[1]:drawUp(50)
     dataR[2]:drawRight(715)
