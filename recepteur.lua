@@ -35,6 +35,11 @@ function RECEPTOR:update(dt)
 
   if p == true then
     self.player.sound:play()
+    if self.player.life_full[3] < self.player.life_empty[3] then
+      self.player.life_full[3] = self.player.life_full[3] + 1
+    else
+      self.player.life_full[3] = 0
+    end
   else
     self.player.sound:stop()
   end

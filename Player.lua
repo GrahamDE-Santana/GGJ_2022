@@ -36,24 +36,36 @@ function PLAYER:new(key)
       obj.scale = {X_SCALING / 32 * 2, Y_SCALING / 32 * 2}
       obj.pos = {20, 20}
       obj.sound = love.audio.newSource("sound/FM_twang.mp3", "static")
+      obj.life_full = {20 + 120, 20 + 100, 0, 20}
+      obj.life_empty = {20 + 120, 20 + 100, 150, 20}
+      obj.color = {200, 0, 0}
       elseif (PLAYER:getSize() == 1) then
       obj.animation = PLAYER:newAnimation(love.graphics.newImage("assets/virual_idle32x32.png"), 32, 32, 1)
       obj.color = {0, 255, 0}
       obj.scale = {X_SCALING / 32 * 2, Y_SCALING / 32 * 2}
       obj.pos = {20, 680}
       obj.sound = love.audio.newSource("sound/music_box.mp3", "static")
+      obj.life_full = {20 + 120, 680, 0, 20}
+      obj.life_empty = {20 + 120, 680, 150, 20}
+      obj.color = {0, 20, 200}
    elseif (PLAYER:getSize() == 2) then
       obj.animation = PLAYER:newAnimation(love.graphics.newImage("assets/idle_bunny34x44.png"), 34, 44, 1)
       obj.color = {0, 0, 255}
       obj.scale = {X_SCALING / 34 * 2, Y_SCALING / 44 * 2}
       obj.pos = {680, 20}
       obj.sound = love.audio.newSource("sound/rock_organ.mp3", "static")
+      obj.life_full = {680 - 170, 20 + 100, 0, 20}
+      obj.life_empty = {680 - 170, 20 + 100, 150, 20}
+      obj.color = {200, 0, 220}
    else
       obj.animation = PLAYER:newAnimation(love.graphics.newImage("assets/plant_idle44x42.png"), 44, 42, 1)
       obj.color = {255, 255, 0}
       obj.scale = {2, 2}
       obj.pos = {680, 680}
       obj.sound = love.audio.newSource("sound/BeepBox-Song.mp3", "static")
+      obj.life_full = {680 - 170, 680, 0, 20}
+      obj.life_empty = {680 - 170, 680, 150, 20}
+      obj.color = {220, 180, 0}
    end
    obj.key = key
    obj.life = 3
@@ -75,6 +87,9 @@ return {
          local spriteNum = math.floor(val.animation.currentTime / val.animation.duration * #val.animation.quads) + 1
          love.graphics.draw(val.animation.spriteSheet, val.animation.quads[spriteNum],
                             val.pos[1], val.pos[2], 0, val.scale[1], val.scale[2])
+         love.graphics.rectangle("fill", val.life_full[1], val.life_full[2], val.life_full[3], val.life_full[4], love.graphics.setColor(val.color))
+         love.graphics.rectangle("line", val.life_empty[1], val.life_empty[2], val.life_empty[3], val.life_empty[4], love.graphics.setColor(val.color))
+         love.graphics.setColor(1, 1, 1)
       end
    end,
    update = function(dt)
