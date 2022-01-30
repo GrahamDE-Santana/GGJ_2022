@@ -25,7 +25,7 @@ function love.load()
     for i=1, 4 do
       dataR[i] = Rythme_file.newRythme(150, 8)
     end
-    dataR[1]:setTableData(1, {true, true, true, true, true, false, false, false})
+    dataR[1]:setTableData(1, {false, false, false, false, true, true, false, false})
     background = love.graphics.newImage('background.png')
     Connector.newConnector(dataR[1], dataR[2])
     --toto.t = toto.u * 4
@@ -57,7 +57,7 @@ function love.update(dt)
   if Player.getSize() == 4 then
     --Boucle principal
     --Receptor.update(dt)
-    Receptor.update(dt)
+    Receptor.first():update(dt)
     for i=1, 4 do
       dataR[i]:update(dt)
     end

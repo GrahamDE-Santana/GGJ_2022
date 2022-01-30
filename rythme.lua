@@ -24,6 +24,7 @@ function  RYTHME:new(tempo, nb)
   obj.loop = true
   obj.barre = false
   obj.isEnd = false
+  obj.next = true
   return (obj)
 end
 
@@ -191,6 +192,7 @@ function RYTHME:drawLeft(xx)
 end
 
 function RYTHME:update(dt)
+  self.next = false
   self.barre = false
   self.t = dt + self.t
   self.isEnd = false
@@ -204,6 +206,7 @@ function RYTHME:update(dt)
   end
   local x, y = self:getXY()
   if x ~= self.x or y ~= self.y then
+    self.next = true
     if x ~= self.x then self.barre = true end
     self.x = x
     self.y = y
@@ -215,6 +218,12 @@ function RYTHME:getEnd()
 
   --x = x + 4
   --if x > self.nb then x = x - self.nb end
+  -- y = y - 1
+  -- if y <= 0 then
+  --   y = 8
+  --   x = x - 1
+  --   if (x <= 0) then x = self.nb end
+  -- end
   return self.data[x][y]
 end
 
