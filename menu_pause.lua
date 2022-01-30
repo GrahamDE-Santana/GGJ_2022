@@ -6,7 +6,7 @@ function love.load()
 end 
 
 function love.keypressed(key, unicode)
-    if key == 'p' then pause = not pause end
+    if key == 'escape' then pause = not pause end
  
 end
 
