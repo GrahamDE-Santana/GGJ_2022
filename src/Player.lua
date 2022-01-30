@@ -1,6 +1,6 @@
 --Player.lua
 
-local Cross = require "Cross"
+local Cross = require "src.Cross"
 
 local Y_SCALING = 42
 local X_SCALING = 44

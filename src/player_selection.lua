@@ -1,7 +1,7 @@
 local sc_menu = 1
 local sc_player_selection = 2
 local sc_game = 3
-local Player = require "Player"
+local Player = require "src.Player"
 PL_SELECT = {}
 
 
