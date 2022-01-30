@@ -17,6 +17,7 @@ local PLAYER_SHEET = {"assets/mask_idle32x32.png",
 
 PLAYER = {}
 PLAYERS = {}
+PODIUM = {}
 
 function PLAYER:new(key)
    local obj = {}
@@ -132,7 +133,7 @@ return {
    players = function()
       return PLAYERS
    end,
-   draw = function() --TODO fix bugged hit anim
+   draw = function()
       for k, val in pairs(PLAYERS) do
          if (DEAD_PLAYERS[k] ~= true) then
             if (val.isHit ~= true) then PLAYER:idleAnimation(k, val) else PLAYER:hitAnimation(k, val) end
@@ -182,7 +183,8 @@ return {
       end
    end,
    foreach = function(f)
-      t_c = {}
+      local t_c = {}
+
       for i, v in pairs(PLAYERS) do
          table.insert(t_c, v)
       end
