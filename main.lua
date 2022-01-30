@@ -51,8 +51,13 @@ function love.keypressed(key)
     if nb_scene ~= sc_podium then
       pause:keypressed()
     else
+      for i, val in  pairs(PODIUM) do
+        table.remove(PODIUM, i)
+      end
+      for i, val in  pairs(PLAYERS) do
+        table.remove(PLAYERS, i)
+      end
       nb_scene = sc_menu
-      Player = newPlayer()
     end
   end
 end
