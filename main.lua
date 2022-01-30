@@ -56,8 +56,8 @@ function love.update(dt)
   Player.update(dt)
   if Player.getSize() == 4 then
     --Boucle principal
-    --Receptor.update(dt)
-    Receptor.first():update(dt)
+    Receptor.update(dt)
+    --Receptor.first():update(dt)
     for i=1, 4 do
       dataR[i]:update(dt)
     end

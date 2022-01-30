@@ -17,6 +17,7 @@ function RECEPTOR:new(player, rythme)
 end
 
 function RECEPTOR:win()
+  print("GAGNE")
   --TODO
 end
 
@@ -25,6 +26,7 @@ function RECEPTOR:wait()
 end
 
 function RECEPTOR:loose()
+  print("AIE")
   --TODO
 end
 function RECEPTOR:update(dt)
@@ -46,11 +48,10 @@ function RECEPTOR:update(dt)
       self:loose()
       return -1
     end
-    print("valide", obj.p)
     self.valide = false
     self.spe = false
     self.rv = 1
-    if self.valide == true then
+    if obj.p == 1 then
       self:win()
     else
       self:wait()
