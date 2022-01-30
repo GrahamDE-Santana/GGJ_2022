@@ -22,6 +22,13 @@ PLAYERS = {}
 PODIUM = {}
 
 function PLAYER:gameEnd()
+   if (GAME_END == true) then
+      table.remove(PODIUM, 1)
+      table.remove(PODIUM, 5)
+   --for i, val in pairs(PODIUM) do
+      --print(i, val.name)
+   --end
+   end
    return (GAME_END)
 end
 
@@ -32,6 +39,7 @@ function PLAYER:new(key)
 
    if (PLAYER:getSize() == 0) then
       obj.color = {200, 0, 0}
+      obj.name = "mask"
       obj.pos = {20, 20}
       obj.sound = {}
       obj.sound[1] = love.audio.newSource("sound/FM_twang_do.mp3", "static")
@@ -46,6 +54,7 @@ function PLAYER:new(key)
    elseif (PLAYER:getSize() == 1) then
       obj.pos = {680, 20}
       obj.sound = {}
+      obj.name = "bunny"
       obj.sound[1] = love.audio.newSource("sound/rock_organ_do.mp3", "static")
       obj.sound[2] = love.audio.newSource("sound/rock_organ_mi.mp3", "static")
       obj.sound[3] = love.audio.newSource("sound/rock_organ_sol.mp3", "static")
@@ -59,6 +68,7 @@ function PLAYER:new(key)
    elseif (PLAYER:getSize() == 2) then
      obj.pos = {680, 680}
      obj.sound = {}
+     obj.name = "plant"
      obj.sound[1] = love.audio.newSource("sound/tuba_do.mp3", "static")
      obj.sound[2] = love.audio.newSource("sound/tuba_mi.mp3", "static")
      obj.sound[3] = love.audio.newSource("sound/tuba_sol.mp3", "static")
@@ -72,6 +82,7 @@ function PLAYER:new(key)
    else
      obj.pos = {20, 680}
      obj.sound = {}
+     obj.name = "virt"
      obj.sound[1] = love.audio.newSource("sound/music_box_do.mp3", "static")
      obj.sound[2] = love.audio.newSource("sound/music_box_mi.mp3", "static")
      obj.sound[3] = love.audio.newSource("sound/music_box_sol.mp3", "static")
