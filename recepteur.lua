@@ -33,6 +33,8 @@ end
 function RECEPTOR:loose()
   self.player.life = self.player.life - 1
   print("AIE")
+  self.player.isHit = true
+  self.player.finishedAnimation = false
   --TODO
 end
 
@@ -69,7 +71,7 @@ function RECEPTOR:update(dt)
     if p == true then obj.p = 1 end
   end
   if self.rin.next == true then
-    print("CHECK")
+    --print("CHECK")
     self.last = math.max(self.last - 1, 0)
     if (p == false) then self.onCreate = false end
     if ((self.valide == false and p == true and self.r == false) or (self.onCreate == true)) and

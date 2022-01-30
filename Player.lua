@@ -39,24 +39,32 @@ function PLAYER:new(key)
       obj.sound = love.audio.newSource("sound/FM_twang.mp3", "static")
       obj.life_full = {20 + 120, 20 + 100, 0, 20}
       obj.life_empty = {20 + 120, 20 + 100, 150, 20}
-    elseif (PLAYER:getSize() == 1) then
+      obj.hitAnim = PLAYER:newAnimation(love.graphics.newImage("assets/mask_hit_32x32.png"), 32, 32, DURATION)
+      obj.hitScale = {X_SCALING / 32 * 2, Y_SCALING / 32 * 2}
+   elseif (PLAYER:getSize() == 1) then
       obj.pos = {680, 20}
       obj.sound = love.audio.newSource("sound/rock_organ.mp3", "static")
       obj.life_full = {680 - 170, 20 + 100, 0, 20}
       obj.life_empty = {680 - 170, 20 + 100, 150, 20}
       obj.color = {200, 0, 220}
+      obj.hitAnim = PLAYER:newAnimation(love.graphics.newImage("assets/bunny_hit_34_44.png"), 34, 44, DURATION)
+      obj.hitScale = {X_SCALING / 34 * 2, Y_SCALING / 44 * 2}
    elseif (PLAYER:getSize() == 2) then
      obj.pos = {680, 680}
      obj.sound = love.audio.newSource("sound/BeepBox-Song.mp3", "static")
      obj.life_full = {680 - 170, 680, 0, 20}
      obj.life_empty = {680 - 170, 680, 150, 20}
      obj.color = {220, 180, 0}
+     obj.hitAnim = PLAYER:newAnimation(love.graphics.newImage("assets/plant_hit_44_42.png"), 44, 42, DURATION)
+     obj.hitScale = {X_SCALING / 44 * 2, Y_SCALING / 42 * 2}
    else
      obj.pos = {20, 680}
      obj.sound = love.audio.newSource("sound/music_box.mp3", "static")
      obj.life_full = {20 + 120, 680, 0, 20}
      obj.life_empty = {20 + 120, 680, 150, 20}
      obj.color = {0, 20, 200}
+     obj.hitAnim = PLAYER:newAnimation(love.graphics.newImage("assets/virt_hit32x32.png"), 32, 32, DURATION)
+     obj.hitScale = {X_SCALING / 32 * 2, Y_SCALING / 32 * 2}
    end
    obj.scale = {X_SCALING / 96 * 2, Y_SCALING / 96 * 2}
    obj.animation = PLAYER:newAnimation(love.graphics.newImage("assets/appear_96_96.png"), 96, 96, DURATION)
@@ -78,18 +86,24 @@ function PLAYER:getSize()
 end
 
 return {
-  players = function()
-    return PLAYERS
-  end,
-   draw = function()
+   players = function()
+      return PLAYERS
+   end,
+   draw = function() --TODO fix bugged hit anim
       for k, val in pairs(PLAYERS) do
-         local spriteNum = math.floor(val.animation.currentTime / val.animation.duration * #val.animation.quads) + 1
-         if (spriteNum == #val.animation.quads) then val.finishedAnimation = true end
-         --print("spritenum: ", spriteNum, "total: ", #val.animation.quads)
-         --if (val.finishedAnimation == true) then
-         love.graphics.draw(val.animation.spriteSheet, val.animation.quads[spriteNum],
-                            val.pos[1], val.pos[2], 0, val.scale[1], val.scale[2])
-         --end
+         if (val.isHit ~= true) then
+            local spriteNum = math.floor(val.animation.currentTime / val.animation.duration * #val.animation.quads) + 1
+            if (spriteNum == #val.animation.quads) then val.finishedAnimation = true else val.finishedAnimation = false end
+            love.graphics.draw(val.animation.spriteSheet, val.animation.quads[spriteNum],
+                               val.pos[1], val.pos[2], 0, val.scale[1], val.scale[2])
+         else
+            local spriteNum = math.floor(val.hitAnim.currentTime / val.hitAnim.duration * #val.hitAnim.quads) + 1
+            if (spriteNum == #val.hitAnim.quads) then val.finishedAnimation = true else val.finishedAnimation = false end
+            print(spriteNum, ": ", #val.hitAnim.quads)
+            
+            love.graphics.draw(val.hitAnim.spriteSheet, val.hitAnim.quads[spriteNum],
+                               val.pos[1], val.pos[2], 0, val.hitScale[1], val.hitScale[2])
+         end
          love.graphics.rectangle("fill", val.life_full[1],
                                  val.life_full[2], val.life, val.life_full[4], love.graphics.setColor(val.color))
          love.graphics.rectangle("line", val.life_empty[1],
@@ -104,10 +118,19 @@ return {
             val.scale = {X_SCALING / PLAYER_X[k] * 2, Y_SCALING / PLAYER_Y[k] * 2}
             val.appeared = true
          end
-         val.animation.currentTime = val.animation.currentTime + dt
-         if val.animation.currentTime >= val.animation.duration then
-            val.animation.currentTime = val.animation.currentTime - val.animation.duration
-         end
+         if (val.isHit == true and val.finishedAnimation == true) then val.isHit = false end
+         --if (val.isHit == true) then print("c'est moi: ", PLAYER_Y[k]) end
+         --if (val.isHit ~= true) then
+            val.animation.currentTime = val.animation.currentTime + dt
+            if val.animation.currentTime >= val.animation.duration then
+               val.animation.currentTime = val.animation.currentTime - val.animation.duration
+            end
+         --else
+            val.hitAnim.currentTime = val.hitAnim.currentTime + dt
+            if val.hitAnim.currentTime >= val.hitAnim.duration then
+               val.hitAnim.currentTime = val.hitAnim.currentTime - val.hitAnim.duration
+            end
+         --end
       end
    end,
    playerPressDown = function(key)
