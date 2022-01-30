@@ -14,8 +14,12 @@ function  RYTHME:new(tempo, nb)
   obj.t = 0
   obj.onEdit = false
   obj.data = {}
+  obj.del = {}
   for i=1, obj.nb  do
     obj.data[i] = {false, false, false, false, false, false, false, false}
+  end
+  for i=1, obj.nb  do
+    obj.del[i] = {false, false, false, false, false, false, false, false}
   end
   obj.u = (60. / obj.tempo)
 
@@ -25,6 +29,8 @@ function  RYTHME:new(tempo, nb)
   obj.barre = false
   obj.isEnd = false
   obj.next = true
+  obj.px = 1
+  obj.py = 1
   return (obj)
 end
 
@@ -71,6 +77,7 @@ function RYTHME:drawUp(yy)
   local x, y = self:getXY()
   local xx = 0
   local power = 0
+  local size = 17
   for ix=1, 4 do
     for iy=1, 8 do
       if self.data[x][y] == true then
@@ -80,11 +87,11 @@ function RYTHME:drawUp(yy)
         love.graphics.setColor(0.3, 0.3, 0.3)
         power = 0
       end
-      love.graphics.rectangle("fill",125 + xx ,yy-(power/2),17 ,50+power)
+      love.graphics.rectangle("fill",125 + xx ,yy-(power/2),size ,50+power)
       love.graphics.setColor(0.5, 0.5, 0.5)
-      love.graphics.rectangle("line",125 + xx,yy-(power/2),17,50+power)
+      love.graphics.rectangle("line",125 + xx,yy-(power/2),size,50+power)
 
-      xx = xx + 17.25
+      xx = xx + size
       y = y - 1
       if y <= 0 then
         love.graphics.setColor(0.9, 0.9, 0.9)
@@ -105,6 +112,8 @@ function RYTHME:drawDown(yy)
   local x, y = self:getXY()
   local xx = 552 - 17.25
   local last = false
+  local size = 17
+
   for ix=1, 4 do
     for iy=1, 8 do
       if self.data[x][y] == true then
@@ -112,9 +121,9 @@ function RYTHME:drawDown(yy)
       else
         love.graphics.setColor(0.3, 0.3, 0.3)
       end
-      love.graphics.rectangle("fill",125 + xx,yy,17 ,50)
+      love.graphics.rectangle("fill",125 + xx,yy,size ,50)
       love.graphics.setColor(0.5, 0.5, 0.5)
-      love.graphics.rectangle("line",125 + xx,yy,17,50)
+      love.graphics.rectangle("line",125 + xx,yy,size,50)
 
       y = y - 1
       if y <= 0 then
@@ -124,7 +133,7 @@ function RYTHME:drawDown(yy)
         x = x - 1
         if (x <= 0) then x = self.nb end
       end
-      xx = xx - 17.25
+      xx = xx - size
     end
   end
   love.graphics.setColor(1, 1, 1)
@@ -135,6 +144,8 @@ function RYTHME:drawRight(xx)
   local bpm = self.t;
   local x, y = self:getXY()
   local yy = 0
+  local size = 17
+
   for ix=1, 4 do
     for iy=1, 8 do
       if self.data[x][y] == true then
@@ -142,11 +153,11 @@ function RYTHME:drawRight(xx)
       else
         love.graphics.setColor(0.3, 0.3, 0.3)
       end
-      love.graphics.rectangle("fill",xx,125 + yy,50 ,17)
+      love.graphics.rectangle("fill",xx,125 + yy,50 ,size)
       love.graphics.setColor(0.5, 0.5, 0.5)
-      love.graphics.rectangle("line",xx,125 + yy,50,17)
+      love.graphics.rectangle("line",xx,125 + yy,50,size)
 
-      yy = yy + 17.25
+      yy = yy + size
       y = y - 1
       if y <= 0 then
         love.graphics.setColor(0.9, 0.9, 0.9)
@@ -165,6 +176,8 @@ function RYTHME:drawLeft(xx)
   local bpm = self.t;
   local x, y = self:getXY()
   local yy = 552 - 17.25
+  local size = 17
+
   for ix=1, 4 do
     for iy=1, 8 do
       if self.data[x][y] == true then
@@ -172,9 +185,9 @@ function RYTHME:drawLeft(xx)
       else
         love.graphics.setColor(0.3, 0.3, 0.3)
       end
-      love.graphics.rectangle("fill",xx,125 + yy,50 ,17)
+      love.graphics.rectangle("fill",xx,125 + yy,50 ,size)
       love.graphics.setColor(0.5, 0.5, 0.5)
-      love.graphics.rectangle("line",xx,125 + yy,50,17)
+      love.graphics.rectangle("line",xx,125 + yy,50,size)
 
       y = y - 1
       if y <= 0 then
@@ -185,7 +198,7 @@ function RYTHME:drawLeft(xx)
         if (x <= 0) then x = self.nb
         end
       end
-      yy = yy - 17.25
+      yy = yy - size
     end
   end
   love.graphics.setColor(1, 1, 1)
@@ -207,38 +220,51 @@ function RYTHME:update(dt)
   local x, y = self:getXY()
   if x ~= self.x or y ~= self.y then
     self.next = true
+    self.px = self.x
+    self.py = self.y
     if x ~= self.x then self.barre = true end
     self.x = x
     self.y = y
+    x = x + 3
+    if x > self.nb then
+      x = x - self.nb
+    end
+    y = y - 1
+    if y <= 0 then
+      y = 8
+      x = x - 1
+      if x <= 0 then
+        x = self.nb
+      end
+    end
+    self.data[x][y] = false
   end
+end
+
+function RYTHME:getIn()
+  local x, y = self:getXY()
+  x = x + 4
+  if x > self.nb then
+     x = x - self.nb
+  end
+  local rv = self.data[x][y]
+  --self.data[x][y] = false
+  return rv
 end
 
 function RYTHME:getEnd()
   local x, y = self:getXY()
 
-  --x = x + 4
-  --if x > self.nb then x = x - self.nb end
-  -- y = y - 1
-  -- if y <= 0 then
-  --   y = 8
-  --   x = x - 1
-  --   if (x <= 0) then x = self.nb end
-  -- end
   return self.data[x][y]
 end
 
+function RYTHME:deleteLast()
+  self.data[self.px][self.py] = false
+end
+
 function RYTHME:edit(v)
-  local tmp = self.t
-  self.t = self.t + (self.u * 0)
   local x, y = self:getXY()
-  if (x > self.nb) then
-    y = 1
-    x = 1
-  end
-
-
   self.data[x][y] = v
-  self.t = tmp
 end
 
 function RYTHME:insert(v, x, y)

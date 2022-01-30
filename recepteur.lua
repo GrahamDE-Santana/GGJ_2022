@@ -1,23 +1,28 @@
 RECEPTOR = {}
 RECEPTORS = {}
 
-function RECEPTOR:new(player, rythme)
+function RECEPTOR:new(player, rythmeIn, rythmeOut)
   local obj = {}
   setmetatable(obj, self)
   self.__index = self
 
   obj.player = player
-  obj.rythme = rythme
+  print(obj.player)
+  obj.rin = rythmeIn
+  obj.rout = rythmeOut
 
   obj.valide = false
   obj.spe = false
   obj.rv = 0
   obj.p = 0
+  obj.onCreate = false
+  obj.last = 10
+  obj.r = false
   return obj
 end
 
 function RECEPTOR:win()
-  print("GAGNE")
+  self.player.life = math.min(self.player.life + 5, 150)
   --TODO
 end
 
@@ -26,37 +31,61 @@ function RECEPTOR:wait()
 end
 
 function RECEPTOR:loose()
+  self.player.life = self.player.life - 1
   print("AIE")
   --TODO
 end
-function RECEPTOR:update(dt)
-  local p = self.player.pressed
-  local r = self.rythme:getEnd()
 
-  if p == true then
+function RECEPTOR:createe()
+  self.rout:edit(true)
+  self.player.life = self.player.life - 4
+end
+
+function RECEPTOR:update(dt)
+  -- if self.player.life <= 0 then
+  --   self.player.life = 0
+  --   return 0
+  -- end
+  local p = self.player.pressed
+  if self.rin.next == true then
+    self.r = self.rin:getIn()
+  end
+
+  if p == true or self.r == true then
     self.player.sound:play()
-    if self.player.life_full[3] < self.player.life_empty[3] then
-      self.player.life_full[3] = self.player.life_full[3] + 1
-    else
-      self.player.life_full[3] = 0
-    end
   else
     self.player.sound:stop()
   end
-  if p == r then
+
+  if (self.r == true) then
+    print("OK!!")
+  end
+  if p == self.r and self.onCreate == false then
     self.valide = true
     obj.p = 0
     if p == true then obj.p = 1 end
   end
-  if self.rythme.next == true then
+  if self.rin.next == true then
+    print("CHECK")
+    self.last = math.max(self.last - 1, 0)
+    if (p == false) then self.onCreate = false end
+    if ((self.valide == false and p == true and self.r == false) or (self.onCreate == true)) and
+        self.last == 0 then
+        print("last : ", self.last)
+        self.onCreate = true
+        self:createe()
+        return (0)
+      end
     if self.valide == false then
       self:loose()
+      --self.rin:deleteLast()
       return -1
     end
     self.valide = false
     self.spe = false
     self.rv = 1
     if obj.p == 1 then
+      self.last = 8
       self:win()
     else
       self:wait()
@@ -75,8 +104,8 @@ return {
         v:update(dt)
      end
   end,
-  newReceptor = function(player, rythme)
-    local obj = RECEPTOR:new(player, rythme)
+  newReceptor = function(player, rin, rout)
+    local obj = RECEPTOR:new(player, rin, rout)
     table.insert(RECEPTORS, obj)
     return obj
   end

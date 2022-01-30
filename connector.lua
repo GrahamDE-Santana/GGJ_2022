@@ -12,12 +12,12 @@ function  CONNECTOR:new(a, b)
 end
 
 function CONNECTOR:update(dt)
-  local x, y = self.b:getXY()
-  x = x + 4
-  if x > self.b.nb then
-    x = x - self.b.nb
-  end
-  self.b:insert(self.a:getCurrentValue(), x, y)
+  -- local x, y = self.b:getXY()
+  -- x = x + 4
+  -- if x > self.b.nb then
+  --   x = x - self.b.nb
+  -- end
+  -- self.b:insert(self.a:getCurrentValue(), x, y)
 end
 
 

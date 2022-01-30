@@ -68,7 +68,7 @@ function PLAYER:new(key)
       obj.color = {220, 180, 0}
    end
    obj.key = key
-   obj.life = 3
+   obj.life = 50
    obj.pressed = false
    return (obj)
 end
@@ -82,12 +82,15 @@ function PLAYER:getSize()
 end
 
 return {
+  players = function()
+    return PLAYERS
+  end,
    draw = function()
       for k, val in pairs(PLAYERS) do
          local spriteNum = math.floor(val.animation.currentTime / val.animation.duration * #val.animation.quads) + 1
          love.graphics.draw(val.animation.spriteSheet, val.animation.quads[spriteNum],
                             val.pos[1], val.pos[2], 0, val.scale[1], val.scale[2])
-         love.graphics.rectangle("fill", val.life_full[1], val.life_full[2], val.life_full[3], val.life_full[4], love.graphics.setColor(val.color))
+         love.graphics.rectangle("fill", val.life_full[1], val.life_full[2], val.life, val.life_full[4], love.graphics.setColor(val.color))
          love.graphics.rectangle("line", val.life_empty[1], val.life_empty[2], val.life_empty[3], val.life_empty[4], love.graphics.setColor(val.color))
          love.graphics.setColor(1, 1, 1)
       end

@@ -25,7 +25,7 @@ function love.load()
     for i=1, 4 do
       dataR[i] = Rythme_file.newRythme(150, 8)
     end
-    dataR[1]:setTableData(1, {false, false, false, false, true, true, false, false})
+    --dataR[1]:setTableData(1, {true, true, true, true, false, false, false, false})
     background = love.graphics.newImage('background.png')
     Connector.newConnector(dataR[1], dataR[2])
     --toto.t = toto.u * 4
@@ -39,9 +39,14 @@ end
 function love.keypressed(key)
   if (Player.getSize() < 4) then
     if (Player.isPresent(key) ~= true) then
-      local p = Player.newPlayer(key)
-      Receptor.newReceptor(p,dataR[Player.getSize()])
-      if Player.getSize() == 4 then musique:play() end
+      Player.newPlayer(key)
+      if Player.getSize() == 4 then
+        Receptor.newReceptor(Player.players()[1], dataR[4], dataR[1])
+        Receptor.newReceptor(Player.players()[2], dataR[1], dataR[2])
+        Receptor.newReceptor(Player.players()[3], dataR[2], dataR[3])
+        Receptor.newReceptor(Player.players()[4], dataR[3], dataR[4])
+        musique:play()
+      end
     end
   end
   Player.playerPressDown(key)
@@ -52,15 +57,16 @@ function love.keyreleased(key)
 end
 
 function love.update(dt)
-  Connector.update(dt)
   Player.update(dt)
   if Player.getSize() == 4 then
     --Boucle principal
-    Receptor.update(dt)
     --Receptor.first():update(dt)
     for i=1, 4 do
       dataR[i]:update(dt)
     end
+    Receptor.update(dt)
+    --Receptor.first():update(dt)
+    --Connector.update(dt)
     --END
   end
 end
