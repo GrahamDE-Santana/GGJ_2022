@@ -22,7 +22,7 @@ function RECEPTOR:new(player, rythmeIn, rythmeOut)
 end
 
 function RECEPTOR:win()
-  self.player.life = math.min(self.player.life + 5, 150)
+  self.player.life = math.min(self.player.life + 3, 150)
   --TODO
 end
 
@@ -38,19 +38,22 @@ end
 
 function RECEPTOR:createe()
   self.rout:edit(true)
-  self.player.life = self.player.life - 4
+  self.player.life = self.player.life - 2
 end
 
 function RECEPTOR:update(dt)
-  -- if self.player.life <= 0 then
-  --   self.player.life = 0
-  --   return 0
-  -- end
   local p = self.player.pressed
   if self.rin.next == true then
     self.r = self.rin:getIn()
   end
 
+  if self.player.life <= 0 then
+    self.player.life = 0
+    if self.r == true then
+      self:createe()
+    end
+    return 0
+  end
   if p == true or self.r == true then
     self.player.sound:play()
   else
@@ -78,7 +81,6 @@ function RECEPTOR:update(dt)
       end
     if self.valide == false then
       self:loose()
-      --self.rin:deleteLast()
       return -1
     end
     self.valide = false
